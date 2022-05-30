@@ -7,7 +7,7 @@ Escuela de Kinesiología, Universidad de los Andes, Chile-
 -Escuela de Ingeniería Biomédica, Universidad de Valparaíso, Chile-
         --Profesores: Oscar Valencia & Alejandro Weinstein--
 """
-#importar librerías
+# importar librerías
 from scipy.integrate import trapz
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,21 +15,21 @@ from emg_cvm_norm import ajusta_emg_func
 
 
 def coactivation_index(emg_A, emg_B, fs):
-    """Calcula el indice de coactivación.
+    """Calcula el índice de coactivación.
 
     La función calcula la coactivación entre músculos antagonistas [1,2]. El
     cálculo se realiza a partir de dos señales de EMG previamente procesadas y
     normalizadas (en base al valor RMS o promedio de la señal rectificada).
 
-    Ambas señales deben haber sido muestreadas con la misma frecuencia de
-    muestreo y deben tener el mismo largo.
+    Ambas señales deben ser adquiridas con la misma frecuencia de
+    muestreo y tener el mismo largo.
 
     Parameters
     ----------
     emg_a : array_like
-        EMG funcional de uno de los músculos antagonistas.
+        EMG funcional de uno de los músculos antagonistas (A).
     emg_b : array_like
-        EMG funcional del otro músculo antagonista.
+        EMG funcional del otro músculo antagonista (B).
     fs : float
         Frecuencia de muestreo de la señal EMG, en hertz. Debe ser la misma
         para ambas señales.
@@ -50,12 +50,13 @@ def coactivation_index(emg_A, emg_B, fs):
     """
     I_antagonist = trapz(np.minimum(emg_A, emg_B)) / fs
     I_total = trapz(emg_A + emg_B) / fs
-    return  2 * I_antagonist / I_total * 100
+    return 2 * I_antagonist / I_total * 100
+
 
 def plot_coactivacion(ax, emg_A, emg_B, label_musc_A, label_musc_B, ci):
-    """Grafica la coactivación entre dos músculos.
+    """Gráfica la coactivación entre dos músculos.
 
-    La función grafica dos señales de EMG. Se muestra el área correspodiente a
+    La función grafica dos señales de EMG. Se muestra el área correspondiente a
     la región de coactivación.
 
     Parameters
@@ -74,7 +75,7 @@ def plot_coactivacion(ax, emg_A, emg_B, label_musc_A, label_musc_B, ci):
     emg_max = np.maximum(emg_A, emg_B).max()
     ax.plot(t, emg_A, lw=2, label=label_musc_A)
     ax.plot(t, emg_B, lw=2, label=label_musc_B)
-    ax.plot([], [], ' ', label=f'CI = {ci:0.2f}%')
+    ax.plot([], [], ' ', label=f'IC = {ci:0.2f}%')
     ax.fill_between(t, np.minimum(emg_A, emg_B), alpha=0.3, color='k')
     ax.set_ylim(0.8 * emg_min, 1.2 * emg_max)
     ax.set_xlim(0, t[-1])
@@ -87,13 +88,14 @@ if __name__ == '__main__':
     # Cargar archivos con EMG de agonista y antagonista
     emg_cvm_vm, emg_cvm_vl = np.loadtxt('P4_SD_CVM.csv',
                                         delimiter=',', skiprows=1).T
-    emg_slsa_vm, emg_slsa_vl = np.loadtxt('P4_SD_SLSA.csv',
+    emg_slsa_vm, emg_slsa_vl = np.loadtxt('SLS_LIBFE.csv',
                                           delimiter=',', skiprows=1).T
 
-    # Normalizar con respecto a contraccion voluntaria maxima
-    fs = 1000 # Frecuencia de muestreo
-    fc = 5 # Frecuencia de corte usada por el filtro en la normalizacion
-    forden = 4 # Orden del filtro usado por el filtro en la normailzacion
+    # Normalizar con respecto a contracción voluntaria máxima,
+    # según artículo O.Valencia et al. 2021.
+    fs = 1000  # Frecuencia de muestreo
+    fc = 5  # Frecuencia de corte usada por el filtro en la normalización
+    forden = 4  # Orden del filtro usado por el filtro en la normailzación
     emg_A, _, _ = ajusta_emg_func(emg_slsa_vm, emg_cvm_vm, fs, fc, forden)
     emg_B, _, _ = ajusta_emg_func(emg_slsa_vl, emg_cvm_vl, fs, fc, forden)
 
@@ -107,4 +109,5 @@ if __name__ == '__main__':
 
     fig, axs = plt.subplots()
     plot_coactivacion(axs, emg_A, emg_B, 'Músculo 1', 'Músculo 2', ci)
+    plt.savefig('Coactivación.png')
     plt.show()
