@@ -86,7 +86,7 @@ def plot_coactivacion(ax, emg_A, emg_B, label_musc_A, label_musc_B, ci):
 
 if __name__ == '__main__':
     # Cargar archivos con EMG de agonista y antagonista
-    emg_cvm_vm, emg_cvm_vl = np.loadtxt('P4_SD_CVM.csv',
+    emg_cvm_vm, emg_cvm_vl = np.loadtxt('CVM_LIBFE.csv',
                                         delimiter=',', skiprows=1).T
     emg_slsa_vm, emg_slsa_vl = np.loadtxt('SLS_LIBFE.csv',
                                           delimiter=',', skiprows=1).T
