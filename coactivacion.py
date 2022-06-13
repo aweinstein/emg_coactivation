@@ -109,5 +109,5 @@ if __name__ == '__main__':
 
     fig, axs = plt.subplots()
     plot_coactivacion(axs, emg_A, emg_B, 'Músculo 1', 'Músculo 2', ci)
-    plt.savefig('Coactivación.png')
+    plt.savefig('coactivacion.png')
     plt.show()
